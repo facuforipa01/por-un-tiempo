@@ -14,6 +14,9 @@ export class UsuarioDto {
 
     @IsOptional()
     @IsBoolean()
-    isActiv?: boolean = true;
+    isActive?: boolean = true;
+
+    @IsString()
+    avatar: string;
 
 }

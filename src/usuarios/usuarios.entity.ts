@@ -16,4 +16,7 @@ export class Usuarios {
 
     @Column({ type:'bool', default:true })
     isActive: boolean;
+
+    @Column({ type: 'varchar', nullable: false, length: 255})
+    avatar: string;
 }
