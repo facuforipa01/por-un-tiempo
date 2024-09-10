@@ -4,6 +4,7 @@ import { Usuarios } from './usuarios.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsuarioDto } from './usuarios.dto';
 import { AuthService } from './auth/auth.service';
+import { PaginationQueryDto } from 'src/common/paginator.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -74,13 +75,27 @@ export class UsuariosService {
       throw new HttpException(err.message, err.status)
     }
   }
-  async getAll(): Promise<UsuarioDto[]> {
+
+  //?page=1&limit=1 para pasarle limites de pagina y cantidad de usuarios a travez del endpoint
+  async getAll(paginationQuery: PaginationQueryDto): Promise<{
+    data: UsuarioDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+
+    const {page = 1, limit = 10} = paginationQuery;
+
     try {
-      const usuarios = await this.repo.find()
+      
+      const [usuarios, total] = await this.repo.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit
+      })
 
       if (!usuarios) throw new NotFoundException('no hay usuarios encontrados')
 
-      return usuarios
+      return {data: usuarios, total, page, limit}
 
     } catch (err) {
       console.error(err)
@@ -91,14 +106,10 @@ export class UsuariosService {
   }
   async delete(id: number): Promise<UsuarioDto> {
     try {
-      const user = await this.repo.findOne({ where: { id } }) //esto lo pongo porque algo te obliga a retornar
-      const usuario = await this.repo.delete(id)
-
-      if (!usuario) throw new NotFoundException('usuario no encontrado')
-        
-        return (user)  //retorna el usuario que elimino, no se ocmo agregar texto
-        
-
+      const user = await this.repo.findOne({ where: { id } }) //busca a el usuario por id
+      const usuario = await this.repo.remove(user)
+      return usuario
+                
     } catch (err) {
       console.error(err)
       if (err instanceof QueryFailedError)

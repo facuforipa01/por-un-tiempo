@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Request, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UsuarioDto } from './usuarios.dto';
 import { Response } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
-// import { JwtAuthGuard } from './auth/jwt-auth-guards';
+import { PaginationQueryDto } from 'src/common/paginator.dto';
 
 @Controller('usuarios') 
 export class UsuariosController {
@@ -43,8 +43,8 @@ export class UsuariosController {
     res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
   }
   @Get('/')
-  async getAll(@Res() res: Response) {
-    const usuario = await this.service.getAll();
+  async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() res: Response) {
+    const usuario = await this.service.getAll(paginationQuery);
     res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
   }
   @Delete(':id')
@@ -56,12 +56,3 @@ export class UsuariosController {
 }
 
 
-    // @UseGuards(JwtAuthGuard)
-    // @Get(':id')
-    // getProfile(@Request() req){
-    //     return {
-    //         id: req.user.id,
-    //         nombre: req.user.nombre,
-    //         email: req.user.email
-    //     };
-    // }
