@@ -4,7 +4,7 @@ import { Usuarios } from './usuarios.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { UsuarioDto } from './usuarios.dto';
 import { AuthService } from './auth/auth.service';
-import { PaginationQueryDto } from 'src/common/paginator.dto';
+import { PaginationQueryDto } from 'src/common/paginator/paginator.dto';
 
 @Injectable()
 export class UsuariosService {

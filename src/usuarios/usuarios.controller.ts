@@ -3,7 +3,7 @@ import { UsuariosService } from './usuarios.service';
 import { UsuarioDto } from './usuarios.dto';
 import { Response } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { PaginationQueryDto } from 'src/common/paginator.dto';
+import { PaginationQueryDto } from 'src/common/paginator/paginator.dto';
 
 @Controller('usuarios') 
 export class UsuariosController {

@@ -13,13 +13,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
 import { db } from './config'
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
     //las configuraciones de este modulo ahora son globales
     // y abarcan toda la aplicacion
     TypeOrmModule.forRoot(db),
-    UsuariosModule
+    UsuariosModule,
+    SocketModule
   ],
   controllers: [AppController],
   providers: [AppService],
