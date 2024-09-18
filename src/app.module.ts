@@ -14,6 +14,8 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
 import { db } from './config'
 import { SocketModule } from './socket/socket.module';
+import { ParcelasModule } from './parcelas/parcelas.module';
+import { DepartamentosModule } from './departamentos/departamentos.module';
 
 @Module({
   imports: [
@@ -21,7 +23,9 @@ import { SocketModule } from './socket/socket.module';
     // y abarcan toda la aplicacion
     TypeOrmModule.forRoot(db),
     UsuariosModule,
-    SocketModule
+    SocketModule,
+    ParcelasModule,
+    DepartamentosModule
   ],
   controllers: [AppController],
   providers: [AppService],
