@@ -16,6 +16,8 @@ import { db } from './config'
 import { SocketModule } from './socket/socket.module';
 import { ParcelasModule } from './parcelas/parcelas.module';
 import { DepartamentosModule } from './departamentos/departamentos.module';
+import { IngresosModule } from './ingresos/ingresos.module';
+import { ReservasModule } from './reservas/reservas.module';
 
 @Module({
   imports: [
@@ -25,7 +27,9 @@ import { DepartamentosModule } from './departamentos/departamentos.module';
     UsuariosModule,
     SocketModule,
     ParcelasModule,
-    DepartamentosModule
+    DepartamentosModule,
+    IngresosModule,
+    ReservasModule
   ],
   controllers: [AppController],
   providers: [AppService],
