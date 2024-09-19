@@ -1,9 +1,10 @@
-import { Parcela } from "src/parcelas/parcelas.entity";
+import { Parcela } from "src/alquileres/parcelas/parcelas.entity";
 import { Usuarios } from "src/usuarios/usuarios.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('ingresos')
 export class Ingreso {
+    //identificador de ingreso
     @PrimaryGeneratedColumn('increment')
     id: number;
 

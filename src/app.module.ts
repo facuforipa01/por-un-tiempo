@@ -14,10 +14,10 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
 import { db } from './config'
 import { SocketModule } from './socket/socket.module';
-import { ParcelasModule } from './parcelas/parcelas.module';
-import { DepartamentosModule } from './departamentos/departamentos.module';
-import { IngresosModule } from './ingresos/ingresos.module';
-import { ReservasModule } from './reservas/reservas.module';
+import { ParcelasModule } from './alquileres/parcelas/parcelas.module';
+import { DepartamentosModule } from './alquileres/departamentos/departamentos.module';
+import { IngresosModule } from './alquileres/ingresos/ingresos.module';
+import { ReservasModule } from './alquileres/reservas/reservas.module';
 
 @Module({
   imports: [
