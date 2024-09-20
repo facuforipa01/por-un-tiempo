@@ -49,5 +49,43 @@ export class ParcelasService {
         }
         
     }
+
+    //update setea el valor ocupada a true
+    async update(id:number) {
+
+      try {
+        const parcela = await this.parcelaRepository.findOne({where: {id}});
+        if (!parcela) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+        await this.parcelaRepository.update(parcela, {ocupada: true});
+        return parcela;
+        
+
+      }catch (err) {
+        console.error(err);
+        if (err instanceof QueryFailedError)
+          throw new HttpException(`${err.name} ${err.driverError}`, 404);
+        throw new HttpException(err.message, err.status);
+      }
+    }
+
+    //downgrade setea el valor ocupada a false
+    async downgrade(id:number) {
+
+      try {
+        const parcela = await this.parcelaRepository.findOne({where: {id}});
+        if (!parcela) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+        await this.parcelaRepository.update(parcela, {ocupada: false} );
+        return parcela;
+        
+
+      }catch (err) {
+        console.error(err);
+        if (err instanceof QueryFailedError)
+          throw new HttpException(`${err.name} ${err.driverError}`, 404);
+        throw new HttpException(err.message, err.status);
+      }
+    }
+
+    
 }
 
