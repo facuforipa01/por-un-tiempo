@@ -9,7 +9,7 @@ import { Usuarios } from 'src/usuarios/usuarios.entity';
 import { UsuarioDto } from 'src/usuarios/usuarios.dto';
 import { PaginationQueryDto } from 'src/common';
 import { ParcelasService } from '../parcelas/parcelas.service';
-import { IngresosController } from './ingresos.controller';
+import { number } from 'joi';
 
 
 @Injectable()
@@ -25,70 +25,87 @@ export class IngresosService {
     ) { }
 
     // ocupar parcela
-    // chequear que exista la parcela y que no este ocupada
-    // chequear que exista el usuario 
-    // cargar el usuario
-    // cargar la fecha actual en ingresos/entrada
-    // cambiar a true la ocupacion parcela/ocupacion
-
     async ocuparParcela(usuarioId: number, parcelaId: number): Promise<IngresoDto> {
+
         const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
+        // chequear que exista la parcela y que no este ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela no encontrada ${parcelaId}`); }
         if (parcelaFound.ocupada) { throw new NotFoundException(`Parcela ${parcelaId} ocupada`); }
 
         const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        // chequear que exista el usuario 
         if (!usuarioFound) throw new NotFoundException('Usuario no encontrado');
 
         const ingreso = this.ingresoRepository.create(
             {
+                // cargar el usuario
                 usuario: usuarioFound,
+                // cargar la parcela
                 parcela: parcelaFound,
+                // cargar la fecha actual en ingresos/entrada
                 entrada: new Date(),
                 salida: null,
             }
         )
+        // si hay ingreso, entonces cambiar a true la ocupacion parcela/ocupacion
+        if (ingreso) this.parcelasService.update(parcelaId)
 
-        if(ingreso) this.parcelasService.update(parcelaId)
-        
         return this.ingresoRepository.save(ingreso)
 
     }
 
     // desocupar parcela
-    // chequear que exista la parcela y que este ocupada
-    // chequear que exista el usuario
-    // cargar la fecha actual en ingresos/salida
-    // cambiar a false la ocupacion parcela/ocupacion
-    async desocuparParcela(parcelaId: number, salidas: number): Promise<IngresoDto> {
+    async desocuparParcela(parcelaId: number, usuarioId: number, ingresoId: number): Promise<IngresoDto> {
         const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
+        // chequear que exista la parcela y que este ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela no encontrada ${parcelaId}`); }
         if (!parcelaFound.ocupada) { throw new NotFoundException(`Parcela ${parcelaId} no esta ocupada`); }
 
-        if(parcelaFound) {this.parcelasService.downgrade(parcelaId) 
         
-        //hay que capturar el id de la entrada a modificar          
-        const update = this.ingresoRepository.update(salidas, {salida: new Date()})
+        const usuarioFound =await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        // chequear que exista el usuario 
+        if (!usuarioFound) throw new NotFoundException('Usuario no encontrado');
+
+       // chequear que el usuario este en la parcela
+       const ingresoEnCuestion = await this.ingresoRepository.findOne({ where: { id: ingresoId }, relations: ['usuario'] })
+       if (!ingresoEnCuestion)  throw new NotFoundException(`Ingreso no encontrado ${ingresoId}`)
+        
+     
+        if (ingresoEnCuestion.usuario.id !== usuarioId) {
+            throw new NotFoundException(`Ingreso ${ingresoEnCuestion.id} no registra al usuario ${usuarioId}, por lo tanto no puede salir de la parcela ${parcelaId} si no esta adentro xd`)
+        }
+
+        
+       const salir = (ingresoEnCuestion.usuario.id == usuarioId)
+       //const salir = true
+
+        // si hay una desocupacion 
+        if (salir) {
+            //cambiar a false la ocupacion parcela/ocupacion
+            this.parcelasService.downgrade(parcelaId)
+            //cargar la fecha actual en ingresos/salida      
+            this.ingresoRepository.update(ingresoId, { salida: new Date() })
         }
 
         return 
     }
-    async desupdate(parcelaId:number) {
+    async desupdate(parcelaId: number) {
 
         try {
-          const salida = await this.ingresoRepository.findOne({where: {id: parcelaId}});
-          if (!salida) throw new NotFoundException('no encontramos ninguna parcela con ese id')
-          await this.ingresoRepository.update(parcelaId, {salida: new Date()});
-          return salida;
-          
-  
-        }catch (err) {
-          console.error(err);
-          if (err instanceof QueryFailedError)
-            throw new HttpException(`${err.name} ${err.driverError}`, 404);
-          throw new HttpException(err.message, err.status);
+            const salida = await this.ingresoRepository.findOne({ where: { id: parcelaId } });
+            if (!salida) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+            await this.ingresoRepository.update(parcelaId, { salida: new Date() });
+            return salida;
+
+
+        } catch (err) {
+            console.error(err);
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
         }
-      }
-  
+    }
+
 
 
     async getOne(id: number): Promise<IngresoDto> {

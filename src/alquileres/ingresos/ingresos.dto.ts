@@ -14,6 +14,7 @@ export class IngresoDto {
     salida: Date;
 
     @IsNotEmpty()
+    @IsNotEmpty()
     usuario: UsuarioDto
 
     @IsNotEmpty()

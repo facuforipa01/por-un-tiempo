@@ -23,9 +23,10 @@ export class IngresosController {
     @Post('salida')
     async desocuparParcela(
         @Body('parcelaId') parcelaId: number,
-        @Body('salida') salida: number,
+        @Body('usuarioId') usuarioId: number,
+        @Body('ingresoId') ingresoId: number,
     ) {
-        const result = this.service.desocuparParcela(parcelaId, salida);
+        const result = this.service.desocuparParcela(parcelaId, usuarioId, ingresoId);
         return result;
     }
     async update(){
