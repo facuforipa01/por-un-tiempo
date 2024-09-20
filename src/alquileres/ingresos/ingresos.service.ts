@@ -19,7 +19,7 @@ export class IngresosService {
         private readonly usuario: Repository<UsuarioDto>
     ) { }
 
-    async guardarIngreso(
+  /**   async guardarIngreso(
         userid: number,
         parcelaid: number,
         ingreso: IngresoDto,
@@ -30,11 +30,9 @@ export class IngresosService {
 
             const parcela = await this.parcela.find({ where: { id: userid } })
             if (!parcela) throw new NotFoundException('parcela no encontrado')
-                
-            //const ahora = Date.getDate()
-            //if (ingreso.salida > ahora.getDate() ) throw new NotFoundException('parcela ocupada')
 
             const result = await this.repo.save(ingreso)
+
             return result
 
         } catch (err) {
@@ -44,16 +42,45 @@ export class IngresosService {
                 throw new HttpException(`${err.name} ${err.driverError}`, 404);
             throw new HttpException(err.message, err.status)
         }
-
-
-
-
-
-
-
-
-
     }
+        */
 
+
+    // ocupar parcela
+    // chequear que exista la parcela y que no este ocupada
+    // chequear que exista el usuario 
+    // cargar el usuario
+    // cargar la fecha actual en ingresos/entrada
+    // cambiar a true la ocupacion parcela/ocupacion
+
+    async ocuparParcela(parcelaid: number, usuarioid: number): Promise<ParcelaDto> {
+        const parcela = await this.parcela.findOneBy({ id: parcelaid });
+
+        if (!parcela) throw new NotFoundException('Parcela no encontrada');
+
+        if (parcela.ocupada) throw new NotFoundException('Parcela ocupada');
+
+        parcela.ocupada = true;
+
+        const nuevoIngreso = new Ingreso(
+            
+        )
+
+        nuevoIngreso.entrada = new Date(Date.now() * 1000)
+        nuevoIngreso.parcela = parcela
+
+        await this.repo.save(nuevoIngreso);
+ 
+        return this.parcela.save(parcela)
+      
+}
+
+    // desocupar parcela
+    // chequear que exista la parcela y que este ocupada
+    // chequear que exista el usuario
+    // cargar la fecha actual en ingresos/salida
+    // cambiar a false la ocupacion parcela/ocupacion
 
 }
+
+

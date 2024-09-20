@@ -6,4 +6,6 @@ export class ParcelaDto {
 
     @IsString()
     nombre: string
+
+    ocupada: boolean
 }

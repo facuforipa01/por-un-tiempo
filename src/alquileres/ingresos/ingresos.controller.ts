@@ -8,12 +8,13 @@ export class IngresosController {
     constructor(private readonly service: IngresosService) {}
 
     @Post('entrada')
-    async guardarIngreso(
-        @Body() ingreso: IngresoDto,
-        userid: number,
-        parcelaid: number
+    async ocuparParcela(
+        @Body() 
+        usuario: number,
+        parcela: number
+        
     ) {
-        const result = this.service.guardarIngreso(userid, parcelaid, ingreso);
+        const result = this.service.ocuparParcela(usuario, parcela);
     
         return result;
     }
