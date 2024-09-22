@@ -16,7 +16,7 @@ export class ParcelasService {
     async getOne(id: number): Promise<ParcelaDto> {
         try {
             const parcela = await this.parcelaRepository.findOne({where: {id}});
-        if (!parcela) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+        if (!parcela) throw new NotFoundException(`No encontramos ninguna parcela con id ${id}`)
             return parcela;
         } catch (err) {
             console.error(err)
@@ -39,7 +39,7 @@ export class ParcelasService {
                 take: limit
               })
             const parcela = await this.parcelaRepository.find();
-        if (!parcela) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+        if (!parcela) throw new NotFoundException('No encontramos ninguna parcela')
             return {data: parcelas, total, page, limit};
         } catch (err) {
             console.error(err)
@@ -55,7 +55,7 @@ export class ParcelasService {
 
       try {
         const parcela = await this.parcelaRepository.findOne({where: {id}});
-        if (!parcela) throw new NotFoundException('no encontramos ninguna parcela con ese id')
+        if (!parcela) throw new NotFoundException(`No encontramos ninguna parcela con id ${id}`)
         await this.parcelaRepository.update(parcela, {ocupada: true});
         return parcela;
         

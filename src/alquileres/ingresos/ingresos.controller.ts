@@ -2,7 +2,6 @@ import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nes
 import { IngresosService } from './ingresos.service';
 import { PaginationQueryDto } from 'src/common';
 import { Response } from 'express';
-import { IngresoDto } from './ingresos.dto';
 
 @Controller('ingresos')
 export class IngresosController {
@@ -19,7 +18,9 @@ export class IngresosController {
         return result;
     }
 
+
     //CARGAR UNA salida
+    //ingresoID por ahora es el codigo unico
     @Post('salida')
     async desocuparParcela(
         @Body('parcelaId') parcelaId: number,
