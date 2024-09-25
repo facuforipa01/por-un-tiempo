@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpStatus, Param, ParseIntPipe, Patch, Post, Query, Res } from '@nestjs/common';
 
 import { PaginationQueryDto } from 'src/common';
 import { Response } from 'express';
@@ -36,4 +36,34 @@ export class ReservasController {
         const reservas = await this.service.getAll(paginationQuery);
         response.status(HttpStatus.OK).json({ ok: true, reservas, msg: 'approved' })
     }
+
+    @Patch(':id/aceptar')
+    async aceptarReserva(
+      @Headers('authorization') Token: string,
+      @Param('id', ParseIntPipe) id: number,
+    ) {
+      try {
+        const splitString = Token.split('Bearer '); // Bearer ${token}
+        console.log(splitString)
+        const result = await this.service.aceptarReserva(id, splitString[1]);
+        return result;
+      } catch (error) {
+        return error;
+      }
+    }
+    @Patch(':id/aceptar')
+    async rechazarReserva(
+      @Headers('authorization') Token: string,
+      @Param('id', ParseIntPipe) id: number,
+    ) {
+      try {
+        const splitString = Token.split('Bearer Token'); // Bearer ${token}
+        console.log(splitString)
+        const result = await this.service.rechazarReserva(id, splitString[1]);
+        return result;
+      } catch (error) {
+        return error;
+      }
+    }
 }
+

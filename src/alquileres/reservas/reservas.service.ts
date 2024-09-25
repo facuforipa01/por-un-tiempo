@@ -1,13 +1,14 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, HttpException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reserva } from './reservas.entity';
+import { Estado, Reserva } from './reservas.entity';
 import { ReservaDto } from './reservas.dto';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Between, QueryFailedError, Repository } from 'typeorm';
 import { Departamento } from '../departamentos/departamentos.entity';
-import { Usuarios } from 'src/usuarios/usuarios.entity';
+import { Role, Usuarios } from 'src/usuarios/usuarios.entity';
 import { DepartamentoDto } from '../departamentos/departamentos.dto';
 import { UsuarioDto } from 'src/usuarios/usuarios.dto';
 import { PaginationQueryDto } from 'src/common';
+import { AuthService } from 'src/usuarios/auth/auth.service';
 
 @Injectable()
 export class ReservasService {
@@ -19,7 +20,8 @@ export class ReservasService {
         private readonly departamentoRepository: Repository<DepartamentoDto>,
         @InjectRepository(Usuarios)
         private readonly usuarioRepository: Repository<UsuarioDto>,
-
+        
+        private authService: AuthService
     ) { }
 
     async reservar(desde: Date, hasta: Date, usuarioId: number, deptoId: number) {
@@ -38,10 +40,9 @@ export class ReservasService {
         // y tiene que coincidir el departamento...
         const reservasConfirmadas = await this.reservaRepository.find(
             {
-                where: { desde: desde, hasta: hasta }, relations: ['departamento']
-            } || {
-                where: { desde: hasta, hasta: desde }, relations: ['departamento']
+                where: { desde: Between(desde, hasta) }, relations: ['departamento']
             }
+
         )
 
         var reservaConfirmadaEnEseDepto = false
@@ -76,14 +77,6 @@ export class ReservasService {
 
 
     }
-
-
-
-
-    //insertar logica para chequear si hay alguna otra reserva confirmada en esa fecha
-    //if (hay alguna reserva entre $desde y $hasta) { throw new NotFoundException(`El departamento Nro ${deptoId} ocupada`); }
-
-
 
 
 
@@ -127,5 +120,65 @@ export class ReservasService {
             throw new HttpException(err.message, err.status)
         }
     }
+
+    async aceptarReserva(id: number, token?: string): Promise<ReservaDto> {
+        try {
+            const esValido = await this.authService.verificarRol(Role.ADMIN, token)
+
+
+            if (!esValido) throw new UnauthorizedException('usted no puede aceptar reservas')
+
+
+            const reserva = await this.reservaRepository.findOne({
+                where: { id }
+            })
+
+
+            await this.reservaRepository.update(reserva, { estado: Estado.ACCEPTED });
+
+
+            if (!reserva) throw new NotFoundException('no encontramos la reserva')
+
+
+            return reserva
+
+
+        } catch (err) {
+            console.error(err)
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
+    }
+    async rechazarReserva(id: number, token?: string): Promise<ReservaDto> {
+        try {
+            const esValido = await this.authService.verificarRol(Role.ADMIN, token)
+
+
+            if (!esValido) throw new UnauthorizedException('usted no puede aceptar reservas')
+
+
+            const reserva = await this.reservaRepository.findOne({
+                where: { id }
+            })
+
+
+            await this.reservaRepository.update(reserva, { estado: Estado.REFUSED });
+
+
+            if (!reserva) throw new NotFoundException('no encontramos la reserva')
+
+
+            return reserva
+
+
+        } catch (err) {
+            console.error(err)
+            if (err instanceof QueryFailedError)
+                throw new HttpException(`${err.name} ${err.driverError}`, 404);
+            throw new HttpException(err.message, err.status);
+        }
+    }
+
 
 }

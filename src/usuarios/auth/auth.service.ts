@@ -1,12 +1,16 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt'
 import { UsuarioDto } from "../usuarios.dto";
+import { Role } from "../usuarios.entity";
+import { UsuariosService } from "../usuarios.service";
 
 @Injectable()
 export class AuthService {
     constructor(
         private jwtService: JwtService,
+        @Inject(forwardRef(() => UsuariosService))
+        private userService: UsuariosService
     ) { }
 
     /**
@@ -57,5 +61,17 @@ export class AuthService {
         return this.jwtService.signAsync(payload)
     }
 
-  
+    async verificarRol(role: Role, token: string) {
+        try {
+            const decodedUser = await this.verifyJwt(token);
+            const usuario = await this.userService.getOne(decodedUser.sub)
+
+
+            return role.includes(usuario.role)
+        } catch (error) {
+            throw new UnauthorizedException('token no valido')
+        }
+    }
+
+
 }
