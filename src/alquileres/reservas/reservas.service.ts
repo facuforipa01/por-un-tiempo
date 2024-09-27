@@ -1,14 +1,14 @@
-import { forwardRef, HttpException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Estado, Reserva } from './reservas.entity';
-import { ReservaDto } from './reservas.dto';
-import { Between, QueryFailedError, Repository } from 'typeorm';
-import { Departamento } from '../departamentos/departamentos.entity';
-import { Role, Usuarios } from 'src/usuarios/usuarios.entity';
-import { DepartamentoDto } from '../departamentos/departamentos.dto';
-import { UsuarioDto } from 'src/usuarios/usuarios.dto';
 import { PaginationQueryDto } from 'src/common';
 import { AuthService } from 'src/usuarios/auth/auth.service';
+import { UsuarioDto } from 'src/usuarios/usuarios.dto';
+import { Role, Usuarios } from 'src/usuarios/usuarios.entity';
+import { Between, QueryFailedError, Repository } from 'typeorm';
+import { DepartamentoDto } from '../departamentos/departamentos.dto';
+import { Departamento } from '../departamentos/departamentos.entity';
+import { ReservaDto } from './reservas.dto';
+import { Estado, Reserva } from './reservas.entity';
 
 @Injectable()
 export class ReservasService {
@@ -20,8 +20,9 @@ export class ReservasService {
         private readonly departamentoRepository: Repository<DepartamentoDto>,
         @InjectRepository(Usuarios)
         private readonly usuarioRepository: Repository<UsuarioDto>,
-        
-        private authService: AuthService
+
+        private authService: AuthService,
+
     ) { }
 
     async reservar(desde: Date, hasta: Date, usuarioId: number, deptoId: number) {
@@ -40,7 +41,7 @@ export class ReservasService {
         // y tiene que coincidir el departamento...
         const reservasConfirmadas = await this.reservaRepository.find(
             {
-                where: { desde: Between(desde, hasta) }, relations: ['departamento']
+                where: [{ desde: Between(desde, hasta) }, { hasta: Between(desde, hasta) }], relations: ['departamento']
             }
 
         )
@@ -121,64 +122,49 @@ export class ReservasService {
         }
     }
 
-    async aceptarReserva(id: number, token?: string): Promise<ReservaDto> {
+    async acceptRequest(id: number, token?: string) {
         try {
-            const esValido = await this.authService.verificarRol(Role.ADMIN, token)
+            const decodedUser = await this.authService.verifyJwt(token);
+            const role: Role = decodedUser.role;
 
-
-            if (!esValido) throw new UnauthorizedException('usted no puede aceptar reservas')
-
-
-            const reserva = await this.reservaRepository.findOne({
-                where: { id }
-            })
-
-
-            await this.reservaRepository.update(reserva, { estado: Estado.ACCEPTED });
-
-
+            const reserva = await this.reservaRepository.findOne({ where: { id } })
             if (!reserva) throw new NotFoundException('no encontramos la reserva')
 
+            if (role == Role.ADMIN) {
+                await this.reservaRepository.update(reserva, { estado: Estado.ACCEPTED });
+            } else {
+                throw new UnauthorizedException('usted no puede aceptar reservas')
+            }
 
-            return reserva
-
-
-        } catch (err) {
-            console.error(err)
-            if (err instanceof QueryFailedError)
-                throw new HttpException(`${err.name} ${err.driverError}`, 404);
-            throw new HttpException(err.message, err.status);
+        } catch (error) {
+            console.error(error);
+            throw new UnauthorizedException('token no valido')
         }
     }
-    async rechazarReserva(id: number, token?: string): Promise<ReservaDto> {
+
+    async rejectRequest(id: number, token?: string) {
         try {
-            const esValido = await this.authService.verificarRol(Role.ADMIN, token)
+            const decodedUser = await this.authService.verifyJwt(token);
+            const role: Role = decodedUser.role;
 
-
-            if (!esValido) throw new UnauthorizedException('usted no puede aceptar reservas')
-
-
-            const reserva = await this.reservaRepository.findOne({
-                where: { id }
-            })
-
-
-            await this.reservaRepository.update(reserva, { estado: Estado.REFUSED });
-
-
+            const reserva = await this.reservaRepository.findOne({ where: { id } })
             if (!reserva) throw new NotFoundException('no encontramos la reserva')
 
-
-            return reserva
-
-
-        } catch (err) {
-            console.error(err)
-            if (err instanceof QueryFailedError)
-                throw new HttpException(`${err.name} ${err.driverError}`, 404);
-            throw new HttpException(err.message, err.status);
+            if (role == Role.ADMIN) {
+                await this.reservaRepository.update(reserva, { estado: Estado.REFUSED });
+            } else {
+                throw new UnauthorizedException('usted no puede aceptar reservas')
+            }
+ 
+        } catch (error) {
+            console.error(error);
+            throw new UnauthorizedException('token no valido')
         }
     }
+
+
+
+  
 
 
 }

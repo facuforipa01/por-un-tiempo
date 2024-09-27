@@ -33,7 +33,9 @@ export class UsuariosService {
 
   async login(email: string, pass: string) {
     try {
-      const user = await this.repo.findOne({ where: { email } });
+      const user = await this.repo.findOne({ where: { email },
+        select: {email:true, password: true, id: true, role: true,nombre: true}
+      });
       console.log(user);
 
       if (!user) throw new NotFoundException('Usuario no encontrado');

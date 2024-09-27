@@ -56,6 +56,7 @@ export class AuthService {
             sub: user.id,
             email: user.email,
             nombre: user.nombre,
+            role: user.role
         }
         // retornamos el token
         return this.jwtService.signAsync(payload)
@@ -66,8 +67,12 @@ export class AuthService {
             const decodedUser = await this.verifyJwt(token);
             const usuario = await this.userService.getOne(decodedUser.sub)
 
+            if(role === Role.USER){
+                throw new UnauthorizedException(`no se puede aceptar con rol de ${role}`)
+            }
 
             return role.includes(usuario.role)
+
         } catch (error) {
             throw new UnauthorizedException('token no valido')
         }

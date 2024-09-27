@@ -19,13 +19,13 @@ constructor(
       if (decodedToken) {
         const usuario = await this.usuariosService.getOne(decodedToken.sub)
         if (usuario) next()
-          else throw new UnauthorizedException('Token invalido')
+          else throw new UnauthorizedException('Token invalido 1')
       } else {
-        throw new UnauthorizedException('Token invalido')
+        throw new UnauthorizedException('Token invalido 2')
       }
     } catch (err) {
       console.log(err)
-      throw new UnauthorizedException('Token invalido')
+      throw new UnauthorizedException('Token invalido 3')
     }
   }
 }

@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ReservasController } from './reservas.controller';
-import { ReservasService } from './reservas.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Reserva } from './reservas.entity';
-import { Departamento } from '../departamentos/departamentos.entity';
-import { Usuarios } from 'src/usuarios/usuarios.entity';
 import { AuthService } from 'src/usuarios/auth/auth.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Usuarios } from 'src/usuarios/usuarios.entity';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { Departamento } from '../departamentos/departamentos.entity';
+import { ReservasController } from './reservas.controller';
+import { Reserva } from './reservas.entity';
+import { ReservasService } from './reservas.service';
+import { UsuariosModule } from 'src/usuarios/usuarios.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reserva, Departamento, Usuarios])],
+  imports: [TypeOrmModule.forFeature([Reserva, Departamento, Usuarios]), UsuariosModule],
   controllers: [ReservasController],
-  providers: [ReservasService, AuthService, JwtService, UsuariosService]
+  providers: [ReservasService, UsuariosService]
 })
-export class ReservasModule {}
+export class ReservasModule { }

@@ -96,24 +96,6 @@ export class IngresosService {
 
         return 
     }
-    async desupdate(parcelaId: number) {
-
-        try {
-            const salida = await this.ingresoRepository.findOne({ where: { id: parcelaId } });
-            if (!salida) throw new NotFoundException('no encontramos ninguna parcela con ese id')
-            await this.ingresoRepository.update(parcelaId, { salida: new Date() });
-            return salida;
-
-
-        } catch (err) {
-            console.error(err);
-            if (err instanceof QueryFailedError)
-                throw new HttpException(`${err.name} ${err.driverError}`, 404);
-            throw new HttpException(err.message, err.status);
-        }
-    }
-
-
 
     async getOne(id: number): Promise<IngresoDto> {
         try {
