@@ -39,6 +39,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(JwtMiddleware)
       .exclude(
+        //estas rutas se excluyen para poder obtener el token
+        // ya sea iniciando sesion o registrandose
         {
           path: 'usuarios/auth/login',
           method: RequestMethod.POST,
@@ -47,8 +49,14 @@ export class AppModule implements NestModule {
           path: 'usuarios/auth/register',
           method: RequestMethod.POST,
         },
+
+        //estas rutas las excluyo porque pido el token en las funciones
+        // y no quiero que me lo pida de nuevo el auth
         {
           path: 'reservas/:id/aceptar',
+          method: RequestMethod.PATCH,
+        },{
+          path: 'reservas/:id/rechazar',
           method: RequestMethod.PATCH,
         }
       )

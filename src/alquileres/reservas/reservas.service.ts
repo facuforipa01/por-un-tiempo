@@ -25,7 +25,7 @@ export class ReservasService {
 
     ) { }
 
-    async reservar(desde: Date, hasta: Date, usuarioId: number, deptoId: number) {
+    async reservar(desdeEntrante: Date, hastaEntrante: Date, usuarioId: number, deptoId: number) {
 
         const deptoFound = await this.departamentoRepository.findOne({ where: { id: deptoId } });
         const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
@@ -36,29 +36,41 @@ export class ReservasService {
         // chequear que exista el usuario 
         if (!usuarioFound) throw new NotFoundException(`Usuario Nro ${usuarioId} no encontrado`);
 
-        // busca todas las reservas en las que coincida la entrada o salida con la de la nueva reserva
-        // pero tambien deberia considerar las fechas del medio
-        // y tiene que coincidir el departamento...
+        // transforma desde, hasta a un periodo
+        const periodoReservaEntrante = Between(desdeEntrante, hastaEntrante)
+
+        // busca todas las reservas en las que coincidan las fechas
         const reservasConfirmadas = await this.reservaRepository.find(
             {
-                where: [{ desde: Between(desde, hasta) }, { hasta: Between(desde, hasta) }], relations: ['departamento']
+                where: [
+                    { desde: periodoReservaEntrante },
+                    { hasta: periodoReservaEntrante }
+                ], relations: ['departamento']
             }
-
         )
 
-        var reservaConfirmadaEnEseDepto = false
+
+        // se fija si ademas de las fechas coincide el departamento
+        var reservaEnEseDepto = false
+        var reservaAprobada = false
+        var reservaImposible = false
 
         if (reservasConfirmadas.length > 0) {
 
             reservasConfirmadas.forEach(depto => {
-                reservaConfirmadaEnEseDepto = (depto.departamento.id == deptoId)
-                if (reservaConfirmadaEnEseDepto) {
-                    throw new NotFoundException('en esa fecha ya hay una reserva')
-                }
+                reservaEnEseDepto = (depto.departamento.id == deptoId)
             })
+            reservasConfirmadas.forEach(reserva => {
+                reservaAprobada = (reserva.estado == Estado.ACCEPTED)
+            })
+            var reservaImposible = (reservaEnEseDepto && reservaAprobada)
+            if (reservaImposible) {
+                throw new NotFoundException('en esa fecha ya hay una reserva aprobada')
+            }
+            
         }
 
-        if (usuarioFound && deptoFound && !reservaConfirmadaEnEseDepto) {
+        if (usuarioFound && deptoFound && !reservaImposible) {
             const reserva = this.reservaRepository.create(
                 {
                     // cargar el usuario
@@ -66,17 +78,12 @@ export class ReservasService {
                     // cargar el depto
                     departamento: deptoFound,
                     // cargar las fechas de la reserva
-                    desde: desde,
-                    hasta: hasta,
+                    desde: desdeEntrante,
+                    hasta: hastaEntrante,
                 }
             )
             return this.reservaRepository.save(reserva)
         }
-
-
-
-
-
     }
 
 
@@ -140,6 +147,7 @@ export class ReservasService {
             console.error(error);
             throw new UnauthorizedException('token no valido')
         }
+        return
     }
 
     async rejectRequest(id: number, token?: string) {
@@ -155,7 +163,7 @@ export class ReservasService {
             } else {
                 throw new UnauthorizedException('usted no puede aceptar reservas')
             }
- 
+
         } catch (error) {
             console.error(error);
             throw new UnauthorizedException('token no valido')
@@ -164,7 +172,7 @@ export class ReservasService {
 
 
 
-  
+
 
 
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber } from "class-validator";
 import { ParcelaDto } from "src/alquileres/parcelas/parcelas.dto";
 import { UsuarioDto } from "src/usuarios/usuarios.dto";
 
@@ -6,16 +6,17 @@ export class IngresoDto {
 
     id: number;
 
-    @IsOptional()
+    @IsDate()
     entrada: Date;
 
-    @IsOptional()
+    @IsDate()
     salida: Date;
 
-    @IsNotEmpty()
+    @IsNumber()
     @IsNotEmpty()
     usuario: UsuarioDto
 
+    @IsNumber()
     @IsNotEmpty()
     parcela: ParcelaDto
 

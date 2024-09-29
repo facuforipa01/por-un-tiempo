@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
 import { IngresosService } from './ingresos.service';
 import { PaginationQueryDto } from 'src/common';
-import { Response } from 'express';
+import { response, Response } from 'express';
 
 @Controller('ingresos')
 export class IngresosController {
@@ -13,11 +13,11 @@ export class IngresosController {
     async ocuparParcela(
         @Body('usuarioId') usuarioId: number,
         @Body('parcelaId') parcelaId: number,
+        @Res() response: Response,
     ) {
-        const result = this.service.ocuparParcela(usuarioId, parcelaId);
-        return result;
+        const result = await this.service.ocuparParcela(usuarioId, parcelaId);
+        response.status(HttpStatus.OK).json({ ok: true, msg: 'ingreso a la parcela exitoso', result })
     }
-
 
     //CARGAR UNA salida
     //ingresoID por ahora es el codigo unico
@@ -26,15 +26,12 @@ export class IngresosController {
         @Body('parcelaId') parcelaId: number,
         @Body('usuarioId') usuarioId: number,
         @Body('ingresoId') ingresoId: number,
+        @Res() response: Response,
     ) {
-        const result = this.service.desocuparParcela(parcelaId, usuarioId, ingresoId);
-        return result;
+        const result = await this.service.desocuparParcela(parcelaId, usuarioId, ingresoId);
+        response.status(HttpStatus.OK).json({ ok: true, msg: 'parcela desocupada', result })
     }
-    async update(){
-
-        
-    }
-
+    
     //OBTENER UN INGRESO
     @Get(':id')
     async getOne(@Param('id') id: number, @Res() response: Response) {

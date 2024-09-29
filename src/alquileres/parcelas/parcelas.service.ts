@@ -51,7 +51,7 @@ export class ParcelasService {
     }
 
     //update setea el valor ocupada a true
-    async update(id:number) {
+    async ocupar(id:number) {
 
       try {
         const parcela = await this.parcelaRepository.findOne({where: {id}});
@@ -69,7 +69,7 @@ export class ParcelasService {
     }
 
     //downgrade setea el valor ocupada a false
-    async downgrade(id:number) {
+    async desocupar(id:number) {
 
       try {
         const parcela = await this.parcelaRepository.findOne({where: {id}});

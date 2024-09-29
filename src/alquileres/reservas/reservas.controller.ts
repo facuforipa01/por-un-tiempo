@@ -22,7 +22,6 @@ export class ReservasController {
         return result;
     }
 
-
     //una reserva
     @Get(':id')
     async getOne(@Param('id') id: number, @Res() response: Response) {
@@ -41,10 +40,12 @@ export class ReservasController {
     async acceptReserva(
       @Param('id', ParseIntPipe) id: number,
       @Headers('authorization') token: string,
+      @Res() response: Response,
     ) {
       try {
         const splitString = token.split('Bearer ')[0]; // Bearer ${token}
-        await this.service.acceptRequest(id, splitString);
+        const result = await this.service.acceptRequest(id, splitString);
+        response.status(HttpStatus.OK).json({ ok: true, msg: 'aceptada con exito', result })
       } catch (error) {
         return error;
       }
@@ -54,18 +55,14 @@ export class ReservasController {
     async rejectReserva(
       @Param('id', ParseIntPipe) id: number,
       @Headers('authorization') token: string,
+      @Res() response: Response,
     ) {
       try {
         const splitString = token.split('Bearer ')[0]; // Bearer ${token}
-        await this.service.rejectRequest(id, splitString);
+        const result = await this.service.rejectRequest(id, splitString);
+        response.status(HttpStatus.OK).json({ ok: true, msg: 'rechazaza con exito', result })
       } catch (error) {
         return error;
       }
     }
-
-
-
-    
-
-
   }

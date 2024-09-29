@@ -49,7 +49,7 @@ export class IngresosService {
             }
         )
         // si hay ingreso, entonces cambiar a true la ocupacion parcela/ocupacion
-        if (ingreso) this.parcelasService.update(parcelaId)
+        if (ingreso) this.parcelasService.ocupar(parcelaId)
 
         return this.ingresoRepository.save(ingreso)
 
@@ -84,17 +84,16 @@ export class IngresosService {
 
         
        const salir = (ingresoEnCuestion.usuario.id == usuarioId && ingresoEnCuestion.parcela.id == parcelaId)
-       //const salir = true
 
         // si hay una desocupacion 
         if (salir) {
             //cambiar a false la ocupacion parcela/ocupacion
-            this.parcelasService.downgrade(parcelaId)
+            this.parcelasService.desocupar(parcelaId)
             //cargar la fecha actual en ingresos/salida      
             this.ingresoRepository.update(ingresoId, { salida: new Date() })
         }
 
-        return 
+        return ingresoEnCuestion
     }
 
     async getOne(id: number): Promise<IngresoDto> {
