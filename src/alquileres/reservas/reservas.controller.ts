@@ -13,8 +13,8 @@ export class ReservasController {
     //crear una reserva
     @Post('reservar')
     async solicitarReserva(
-        @Body('desde') desde: Date,
-        @Body('hasta') hasta: Date,
+        @Body('desde') desde: string,
+        @Body('hasta') hasta: string,
         @Body('usuario') usuarioId: number,
         @Body('departamento') deptoId: number,
     ) {

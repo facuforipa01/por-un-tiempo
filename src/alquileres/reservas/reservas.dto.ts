@@ -1,17 +1,18 @@
-import { IsDate, IsEnum, IsNotEmpty } from "class-validator";
+import { IsDate, IsDateString, IsEnum, IsNotEmpty } from "class-validator";
 import { UsuarioDto } from "src/usuarios/usuarios.dto";
 import { DepartamentoDto } from "../departamentos/departamentos.dto";
 import { Estado } from "./reservas.entity";
+import { strict } from "assert";
 
 
 export class ReservaDto {
 
     id: number;
 
-    @IsDate()
+    @IsDateString({strict: false})
     desde: Date;
 
-    @IsDate()
+    @IsDateString({strict: false})
     hasta: Date;
 
     @IsNotEmpty()

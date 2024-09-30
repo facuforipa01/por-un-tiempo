@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from 'src/common';
 import { AuthService } from 'src/usuarios/auth/auth.service';
@@ -25,7 +25,9 @@ export class ReservasService {
 
     ) { }
 
-    async reservar(desdeEntrante: Date, hastaEntrante: Date, usuarioId: number, deptoId: number) {
+    async reservar(desde: string, hasta: string, usuarioId: number, deptoId: number) {
+        const desdeEntrante = new Date(desde)
+        const hastaEntrante = new Date(hasta)
 
         const deptoFound = await this.departamentoRepository.findOne({ where: { id: deptoId } });
         const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
@@ -36,6 +38,13 @@ export class ReservasService {
         // chequear que exista el usuario 
         if (!usuarioFound) throw new NotFoundException(`Usuario Nro ${usuarioId} no encontrado`);
 
+        // Validar fechas
+        if (isNaN(desdeEntrante.getTime()) || isNaN(hastaEntrante.getTime())) {
+            throw new BadRequestException('Las fechas deben ser válidas, use el formato AAAA-MM-DD');
+        }
+        if ((desdeEntrante.getTime()) > (hastaEntrante.getTime())) {
+            throw new BadRequestException(`la fecha ${desdeEntrante} debe ser anterior a ${hastaEntrante}`);
+        }
 
         //crea la nueva reserva 
         const reserva = this.reservaRepository.create({
@@ -43,6 +52,8 @@ export class ReservasService {
             departamento: deptoFound,
             desde: desdeEntrante,
             hasta: hastaEntrante,
+
+
         })
 
         //busca si se pisa con alguna reserva aceotada
@@ -56,7 +67,7 @@ export class ReservasService {
         })
         if (reservaExists) throw new NotFoundException(`Este depto ya tiene una reserva en esa fecha`)
         return this.reservaRepository.save(reserva)
-       
+
     }
 
 
