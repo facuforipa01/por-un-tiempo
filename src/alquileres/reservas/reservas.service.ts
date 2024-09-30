@@ -4,7 +4,7 @@ import { PaginationQueryDto } from 'src/common';
 import { AuthService } from 'src/usuarios/auth/auth.service';
 import { UsuarioDto } from 'src/usuarios/usuarios.dto';
 import { Role, Usuarios } from 'src/usuarios/usuarios.entity';
-import { Between, QueryFailedError, Repository } from 'typeorm';
+import { Between, In, LessThanOrEqual, MoreThanOrEqual, QueryFailedError, Repository } from 'typeorm';
 import { DepartamentoDto } from '../departamentos/departamentos.dto';
 import { Departamento } from '../departamentos/departamentos.entity';
 import { ReservaDto } from './reservas.dto';
@@ -36,54 +36,27 @@ export class ReservasService {
         // chequear que exista el usuario 
         if (!usuarioFound) throw new NotFoundException(`Usuario Nro ${usuarioId} no encontrado`);
 
-        // transforma desde, hasta a un periodo
-        const periodoReservaEntrante = Between(desdeEntrante, hastaEntrante)
 
-        // busca todas las reservas en las que coincidan las fechas
-        const reservasConfirmadas = await this.reservaRepository.find(
-            {
-                where: [
-                    { desde: periodoReservaEntrante },
-                    { hasta: periodoReservaEntrante }
-                ], relations: ['departamento']
+        //crea la nueva reserva 
+        const reserva = this.reservaRepository.create({
+            usuario: usuarioFound,
+            departamento: deptoFound,
+            desde: desdeEntrante,
+            hasta: hastaEntrante,
+        })
+
+        //busca si se pisa con alguna reserva aceotada
+        const reservaExists = await this.reservaRepository.findOne({
+            where: {
+                departamento: { id: deptoId },
+                estado: In([Estado.ACCEPTED]),
+                desde: LessThanOrEqual(hastaEntrante),
+                hasta: MoreThanOrEqual(desdeEntrante)
             }
-        )
-
-
-        // se fija si ademas de las fechas coincide el departamento
-        var reservaEnEseDepto = false
-        var reservaAprobada = false
-        var reservaImposible = false
-
-        if (reservasConfirmadas.length > 0) {
-
-            reservasConfirmadas.forEach(depto => {
-                reservaEnEseDepto = (depto.departamento.id == deptoId)
-            })
-            reservasConfirmadas.forEach(reserva => {
-                reservaAprobada = (reserva.estado == Estado.ACCEPTED)
-            })
-            var reservaImposible = (reservaEnEseDepto && reservaAprobada)
-            if (reservaImposible) {
-                throw new NotFoundException('en esa fecha ya hay una reserva aprobada')
-            }
-            
-        }
-
-        if (usuarioFound && deptoFound && !reservaImposible) {
-            const reserva = this.reservaRepository.create(
-                {
-                    // cargar el usuario
-                    usuario: usuarioFound,
-                    // cargar el depto
-                    departamento: deptoFound,
-                    // cargar las fechas de la reserva
-                    desde: desdeEntrante,
-                    hasta: hastaEntrante,
-                }
-            )
-            return this.reservaRepository.save(reserva)
-        }
+        })
+        if (reservaExists) throw new NotFoundException(`Este depto ya tiene una reserva en esa fecha`)
+        return this.reservaRepository.save(reserva)
+       
     }
 
 

@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsDate, IsEnum, IsNotEmpty } from "class-validator";
 import { UsuarioDto } from "src/usuarios/usuarios.dto";
 import { DepartamentoDto } from "../departamentos/departamentos.dto";
 import { Estado } from "./reservas.entity";
+
 
 export class ReservaDto {
 
     id: number;
 
-    @IsOptional()
+    @IsDate()
     desde: Date;
 
-    @IsOptional()
+    @IsDate()
     hasta: Date;
 
-    @IsNotEmpty()
     @IsNotEmpty()
     usuario: UsuarioDto;
 
@@ -21,6 +21,11 @@ export class ReservaDto {
     departamento: DepartamentoDto;
 
     @IsNotEmpty()
+    @IsEnum(
+        Estado,{
+            message: `solo estados como ${Estado.ACCEPTED}/${Estado.PENDING}/${Estado.REFUSED}`
+        }
+    )
     estado: Estado;
 
 }

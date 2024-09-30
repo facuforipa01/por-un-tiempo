@@ -17,6 +17,7 @@ export class UsuariosController {
       .status(HttpStatus.CREATED)
       .json({ ok: true, result, msg: 'creado' });
   }
+
   @Post('auth/login')
   async login(
     @Body() usuario: { email: string; password: string },
@@ -25,6 +26,7 @@ export class UsuariosController {
     const token = await this.service.login(usuario.email, usuario.password);
     res.status(HttpStatus.OK).json({ ok: true, token, msg: 'approved' });
   }
+
   @Patch(':id')
   @UseInterceptors(FilesInterceptor('files'))
   async updateUser(
@@ -42,17 +44,18 @@ export class UsuariosController {
     const usuario = await this.service.getOne(id);
     res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
   }
+
   @Get('/')
   async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() res: Response) {
     const usuario = await this.service.getAll(paginationQuery);
     res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
   }
+
   @Delete(':id')
   async delete(@Param('id') id: number, @Res() res: Response) {
     const result = await this.service.delete(id);
     res.status(HttpStatus.OK).json({ ok: true, result, msg: 'approved' });
   }
-  
 }
 
 

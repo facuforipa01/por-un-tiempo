@@ -34,7 +34,7 @@ export class UsuariosService {
   async login(email: string, pass: string) {
     try {
       const user = await this.repo.findOne({ where: { email },
-        select: {email:true, password: true, id: true, role: true,nombre: true}
+        select: {email:true, password: true, id: true, role: true, nombre: true}
       });
       console.log(user);
 

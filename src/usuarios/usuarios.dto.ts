@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, } from "class-validator";
+import { IsBoolean, IsEmail, IsEnum, IsString, } from "class-validator";
 import { Role } from "./usuarios.entity";
 
 export class UsuarioDto {
@@ -18,14 +18,11 @@ export class UsuarioDto {
             message: `solo roles como ${Role.ADMIN} o ${Role.USER}`
         }
     )
-    @IsOptional()
     role?: Role;
 
-    @IsOptional()
     @IsBoolean()
     isActive?: boolean = true;
 
     @IsString()
     avatar: string;
-
 }
