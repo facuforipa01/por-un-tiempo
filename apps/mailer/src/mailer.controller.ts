@@ -1,12 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
-import { MailerService } from './mailer.service';
+import { MailerServiceService } from './mailer.service';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 @Controller()
 export class MailerController {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(private readonly mailerServiceService: MailerServiceService) {}
 
-  @Get()
-  getHello(): string {
-    return this.mailerService.getHello();
+@EventPattern('send-mail')
+  sendMail(@Payload() payload: any): string {
+      console.log(payload)
+    return this.mailerServiceService.getHello();
   }
 }

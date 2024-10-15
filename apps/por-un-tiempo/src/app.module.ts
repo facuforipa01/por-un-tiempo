@@ -12,12 +12,13 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
-import { db } from './config'
+import { db, envs } from './config'
 import { SocketModule } from './socket/socket.module';
 import { ParcelasModule } from './alquileres/parcelas/parcelas.module';
 import { DepartamentosModule } from './alquileres/departamentos/departamentos.module';
 import { IngresosModule } from './alquileres/ingresos/ingresos.module';
 import { ReservasModule } from './alquileres/reservas/reservas.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -29,7 +30,18 @@ import { ReservasModule } from './alquileres/reservas/reservas.module';
     ParcelasModule,
     DepartamentosModule,
     IngresosModule,
-    ReservasModule
+    ReservasModule,
+    ClientsModule.register([
+      {
+        name: 'MAILER',
+        transport: Transport.TCP,
+        options: {
+          //mismos q donde escucha el microservicio
+          host: envs.ms_host,
+          port: envs.ms_port,
+          },
+      }
+    ])
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,6 +8,8 @@ interface EnvVars {
     DB_PASS: string;
     DATABASE: string;
     JWT_SEED: string;
+    MS_PORT: number;
+    MS_HOST: string;
 }
 
 const envsSchema = joi
@@ -18,6 +20,8 @@ const envsSchema = joi
     //DB_PASS: joi.string().required(),
     DATABASE: joi.string().required(),
     JWT_SEED: joi.string().required(),
+    MS_PORT: joi.number().required(),
+    MS_HOST: joi.string().required(),
 })
 .unknown(true)
 
@@ -34,4 +38,6 @@ export const envs = {
     pass: envVars.DB_PASS,
     database: envVars.DATABASE,
     jwt: envVars.JWT_SEED,
+    ms_port: envVars.MS_PORT,
+    ms_host: envVars.MS_HOST
 }

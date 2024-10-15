@@ -86,6 +86,11 @@ export class ParcelasService {
       }
     }
 
+    async create(parcela: Parcela){
+      const nuevaParcela = this.parcelaRepository.create(parcela)
+       await this.parcelaRepository.save(nuevaParcela)
+    }
+
     
 }
 
