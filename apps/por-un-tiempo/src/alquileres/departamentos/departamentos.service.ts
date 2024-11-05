@@ -13,9 +13,9 @@ export class DepartamentosService {
   constructor(
     @Inject('MAILER') private readonly proxy: ClientProxy,
     @InjectRepository(Departamento)
-        private readonly deptoRepository: Repository<DepartamentoDto>,
-        private readonly authService: AuthService
-    ) {}
+    private readonly deptoRepository: Repository<DepartamentoDto>,
+    private readonly authService: AuthService
+  ) { }
 
 
   async getOne(id: number): Promise<DepartamentoDto> {
@@ -55,18 +55,8 @@ export class DepartamentosService {
 
   }
 
-  //falta importar modulo auth correctamente
-  async create(depto: Departamento, token?: string) {
-    const decodedUser = await this.authService.verifyJwt(token);
-    const role: Role = decodedUser.role;
-
-    if (role == Role.ADMIN) {
-      const nuevoDepto = this.deptoRepository.create(depto)
-      await this.deptoRepository.save(nuevoDepto)
-    } else {
-      throw new UnauthorizedException('usted no agregar nuevos departamentos')
-    }
-
-
+  async create(depto: Departamento){
+    const nuevoDepto = this.deptoRepository.create(depto)
+     await this.deptoRepository.save(nuevoDepto)
   }
 }

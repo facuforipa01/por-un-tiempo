@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "2b6f01dc-09ff-4f52-9eed-538f405fabb6",
+		"name": "admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38307704"
+	},
+	"item": [
+		{
+			"name": "se registra un admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"admin\",\r\n    \"email\": \"admin@mail.com\",\r\n    \"password\": \"123456\",\r\n    \"avatar\": \"holi.jpg\",\r\n    \"role\": \"ADMIN\"\r\n    \r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/usuarios/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"usuarios",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "se loguea como admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@mail.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/usuarios/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"usuarios",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ver reservas",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJub21icmUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTczMDg0Njg1NSwiZXhwIjoxNzMwOTMzMjU1fQ.iiMj8cwAYElS6odrRGKbTYHehMjXcDsMcJGPDYSQkg0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEzLCJlbWFpbCI6ImFkbWluMkBleGFtcGxlLmNvbSIsIm5vbWJyZSI6ImFkbWluIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzI3NjM4OTk1LCJleHAiOjE3Mjc3MjUzOTV9.nirnEb3KdogYGigBxdd675FzwVB1cbjqIEjFJk5XfKU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/reservas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "acepta una reserva",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJub21icmUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTczMDg0Njg1NSwiZXhwIjoxNzMwOTMzMjU1fQ.iiMj8cwAYElS6odrRGKbTYHehMjXcDsMcJGPDYSQkg0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/reservas/1/aceptar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservas",
+						"1",
+						"aceptar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rechaza una reserva",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJub21icmUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTczMDg0Njg1NSwiZXhwIjoxNzMwOTMzMjU1fQ.iiMj8cwAYElS6odrRGKbTYHehMjXcDsMcJGPDYSQkg0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/reservas/1/rechazar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"reservas",
+						"1",
+						"rechazar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nueva parcela",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJub21icmUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTczMDg0Njg1NSwiZXhwIjoxNzMwOTMzMjU1fQ.iiMj8cwAYElS6odrRGKbTYHehMjXcDsMcJGPDYSQkg0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Parcela 2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/parcelas/nuevo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"parcelas",
+						"nuevo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nuevo depto",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJub21icmUiOiJhZG1pbiIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTczMDg0ODc3MiwiZXhwIjoxNzMwOTM1MTcyfQ.W_UhJptq7DSa4VB03xFO20YPX73u9w6fX0-DkPMTXNw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Departamento 12\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/departamentos/nuevo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"departamentos",
+						"nuevo"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -12,13 +12,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { JwtMiddleware } from './usuarios/auth/middlewares/jwt/jwt.middleware';
-import { db, envs } from './config'
+import { db } from './config'
 import { SocketModule } from './socket/socket.module';
 import { ParcelasModule } from './alquileres/parcelas/parcelas.module';
 import { DepartamentosModule } from './alquileres/departamentos/departamentos.module';
 import { IngresosModule } from './alquileres/ingresos/ingresos.module';
 import { ReservasModule } from './alquileres/reservas/reservas.module';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -30,18 +29,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ParcelasModule,
     DepartamentosModule,
     IngresosModule,
-    ReservasModule,
-    ClientsModule.register([
-      {
-        name: 'MAILER',
-        transport: Transport.TCP,
-        options: {
-          //mismos q donde escucha el microservicio
-          host: envs.ms_host,
-          port: envs.ms_port,
-          },
-      }
-    ])
+    ReservasModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -60,6 +48,14 @@ export class AppModule implements NestModule {
         {
           path: 'usuarios/auth/register',
           method: RequestMethod.POST,
+        },
+        {
+          path: 'parcelas',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'departamentos',
+          method: RequestMethod.GET,
         },
 
         //estas rutas las excluyo porque pido el token en las funciones
