@@ -1,10 +1,9 @@
-import { HttpException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Departamento } from './departamentos.entity';
 import { DepartamentoDto } from './departamentos.dto';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from '../../common';
-import { Role } from '../../usuarios/usuarios.entity';
 import { AuthService } from '../../usuarios/auth/auth.service';
 import { ClientProxy } from '@nestjs/microservices';
 

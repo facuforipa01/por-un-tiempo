@@ -10,12 +10,23 @@ export class Parcela {
     @Column({ type: 'varchar', nullable: true })
     nombre: string;
 
+    @Column({ type: 'varchar', nullable: true })
+    descripcion: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    lat: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    long: string;
+
+    @Column({ nullable: true })
+    precio: number;
+
+    @Column({ type: 'varchar', nullable: true })
+    imagen: string;
+
     // estado de la parcela
     @Column({ type: 'boolean', default: false})
     ocupada: boolean
-
-    //agregar columna descripcion
-
-    //agregar columna precio
 
 }

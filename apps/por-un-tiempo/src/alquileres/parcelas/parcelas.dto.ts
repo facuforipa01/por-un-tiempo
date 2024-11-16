@@ -7,5 +7,15 @@ export class ParcelaDto {
     @IsString()
     nombre: string
 
+    descripcion: string
+
+    lat:string
+
+    long:string
+
+    precio: number
+
+    imagen: string
+
     ocupada: boolean
 }
