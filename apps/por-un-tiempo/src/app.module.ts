@@ -57,6 +57,10 @@ export class AppModule implements NestModule {
           path: 'departamentos',
           method: RequestMethod.GET,
         },
+        {
+          path: 'reservas',
+          method: RequestMethod.GET,
+        },
 
         //estas rutas las excluyo porque pido el token en las funciones
         // y no quiero que me lo pida de nuevo el auth
