@@ -50,7 +50,8 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      const splitString = authorization.split('Bearer ')[0]; // Bearer ${token}
+      console.log('Esto anda2 acepta')
+      const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.acceptRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'aceptada con exito', result })
     } catch (error) {
@@ -65,7 +66,7 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      console.log('Esto anda2')
+      console.log('Esto anda2 rechaza')
       const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.rejectRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'rechazaza con exito', result })
