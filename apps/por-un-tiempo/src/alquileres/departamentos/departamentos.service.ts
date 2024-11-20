@@ -36,7 +36,7 @@ export class DepartamentosService {
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10 } = paginationQuery;
+    const { page = 1, limit = 100 } = paginationQuery;
     try {
       const [depto, total] = await this.deptoRepository.findAndCount({
         skip: (page - 1) * limit,
