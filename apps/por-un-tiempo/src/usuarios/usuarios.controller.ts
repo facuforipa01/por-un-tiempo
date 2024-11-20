@@ -24,7 +24,7 @@ export class UsuariosController {
     @Res() res: Response,
   ) {
     const token = await this.service.login(usuario.email, usuario.password);
-    res.status(HttpStatus.OK).json({ ok: true, token, msg: 'approved' });
+    res.status(HttpStatus.OK).json({ ok: true, result:token, msg: 'approved' });
   }
 
   @Patch(':id')

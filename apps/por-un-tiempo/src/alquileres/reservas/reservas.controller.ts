@@ -3,6 +3,7 @@ import { BadRequestException, Body, Controller, Get, Headers, HttpStatus, Param,
 import { PaginationQueryDto } from '../../common';
 import { Response } from 'express';
 import { ReservasService } from './reservas.service';
+import { string } from 'joi';
 
 
 @Controller('reservas')
@@ -31,24 +32,25 @@ export class ReservasController {
   @Get(':id')
   async getOne(@Param('id') id: number, @Res() response: Response) {
     const reserva = await this.service.getOne(id);
-    response.status(HttpStatus.OK).json({ ok: true, reserva, msg: 'approved' })
+    response.status(HttpStatus.OK).json({ ok: true, result: reserva, msg: 'approved' })
   }
 
   //todas las reservas
   @Get('/')
-  async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() response: Response) {
+  async getAll(@Query() paginationQuery: PaginationQueryDto, @Headers('authorization') authorization: string, @Res() response: Response) {
     const reservas = await this.service.getAll(paginationQuery);
-    response.status(HttpStatus.OK).json({ ok: true, reservas, msg: 'approved' })
+    console.log(authorization)
+    response.status(HttpStatus.OK).json({ ok: true, result: reservas, msg: 'approved' })
   }
 
   @Patch(':id/aceptar')
   async acceptReserva(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') token: string,
+    @Headers('authorization') authorization: string,
     @Res() response: Response,
   ) {
     try {
-      const splitString = token.split('Bearer ')[0]; // Bearer ${token}
+      const splitString = authorization.split('Bearer ')[0]; // Bearer ${token}
       const result = await this.service.acceptRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'aceptada con exito', result })
     } catch (error) {
@@ -59,11 +61,12 @@ export class ReservasController {
   @Patch(':id/rechazar')
   async rejectReserva(
     @Param('id', ParseIntPipe) id: number,
-    @Headers('authorization') token: string,
+    @Headers('authorization') authorization: string,
     @Res() response: Response,
   ) {
     try {
-      const splitString = token.split('Bearer ')[0]; // Bearer ${token}
+      console.log('Esto anda2')
+      const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.rejectRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'rechazaza con exito', result })
     } catch (error) {
