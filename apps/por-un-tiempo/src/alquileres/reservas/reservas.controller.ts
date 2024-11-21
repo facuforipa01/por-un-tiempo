@@ -39,7 +39,6 @@ export class ReservasController {
   @Get('/')
   async getAll(@Query() paginationQuery: PaginationQueryDto, @Headers('authorization') authorization: string, @Res() response: Response) {
     const reservas = await this.service.getAll(paginationQuery);
-    console.log(authorization)
     response.status(HttpStatus.OK).json({ ok: true, result: reservas, msg: 'approved' })
   }
 
@@ -50,7 +49,6 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      console.log('Esto anda2 acepta')
       const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.acceptRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'aceptada con exito', result })
@@ -66,7 +64,6 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      console.log('Esto anda2 rechaza')
       const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.rejectRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'rechazaza con exito', result })
