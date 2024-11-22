@@ -49,10 +49,7 @@ export class AppModule implements NestModule {
           path: 'usuarios/auth/register',
           method: RequestMethod.POST,
         },
-        {
-          path: 'parcelas',
-          method: RequestMethod.GET,
-        },
+        
         {
           path: 'departamentos',
           method: RequestMethod.GET,
