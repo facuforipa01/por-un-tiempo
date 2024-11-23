@@ -65,7 +65,7 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      console.log('Esto anda2')
+      console.log('Esto anda2 rechaza')
       const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.rejectRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'rechazaza con exito', result })

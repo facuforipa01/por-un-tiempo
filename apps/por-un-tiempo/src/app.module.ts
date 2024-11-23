@@ -64,13 +64,15 @@ export class AppModule implements NestModule {
 
         //estas rutas las excluyo porque pido el token en las funciones
         // y no quiero que me lo pida de nuevo el auth
+        
+        {
+          path: 'reservas/:id/rechazar',
+          method: RequestMethod.PATCH,
+        },
         {
           path: 'reservas/:id/aceptar',
           method: RequestMethod.PATCH,
-        },{
-          path: 'reservas/:id/rechazar',
-          method: RequestMethod.PATCH,
-        }
+        },
       )
       .forRoutes('')
   }
