@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
 import { ParcelasService } from './parcelas.service';
 import { Response } from 'express';
 import { PaginationQueryDto } from '../../common';
@@ -14,9 +14,9 @@ export class ParcelasController {
      response.status(HttpStatus.OK).json({ ok: true, parcela, msg: 'approved' })
     }
     @Get('/')
-    async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() response: Response){
+    async getAll(@Query() paginationQuery: PaginationQueryDto,  @Headers('authorization') authorization: string , @Res() response: Response){
         const parcelas = await this.service.getAll(paginationQuery);
-     response.status(HttpStatus.OK).json({ ok: true, parcelas, msg: 'approved' })
+     response.status(HttpStatus.OK).json({ ok: true, result:parcelas, msg: 'approved' })
     }
     @Post('/nuevo')
     async create(@Body() parcela: Parcela, @Res() response: Response) {

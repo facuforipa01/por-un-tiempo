@@ -50,7 +50,7 @@ export class ReservasController {
     @Res() response: Response,
   ) {
     try {
-      const splitString = authorization.split('Bearer ')[0]; // Bearer ${token}
+      const splitString = authorization.split('Bearer ')[1]; // Bearer ${token}
       const result = await this.service.acceptRequest(id, splitString);
       response.status(HttpStatus.OK).json({ ok: true, msg: 'aceptada con exito', result })
     } catch (error) {

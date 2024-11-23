@@ -58,10 +58,6 @@ export class AppModule implements NestModule {
           method: RequestMethod.GET,
         },
         {
-          path: 'reservas',
-          method: RequestMethod.GET,
-        },
-        {
           path: 'usuario/check',
           method: RequestMethod.POST,
         },
