@@ -15,7 +15,6 @@ export class SocketGateway implements OnModuleInit {
     private readonly socketService: SocketService,
     private readonly auth: AuthService
   ) { }
-
   @WebSocketServer()
   server: Server;
 

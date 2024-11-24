@@ -24,16 +24,5 @@ export class DepartamentosController {
         const deptoCreated = await this.service.create(depto);
         response.status(HttpStatus.CREATED).json({ ok: true, deptoCreated, msg: 'created' })
     }
-    //falta importar modulo auth correctamente
-    // @Post('/nuevo')
-    // async create(
-    //     @Body() depto: Departamento, 
-    //     @Headers('authorization') token: string,
-    //     @Res() response: Response) {
-    //     if (!depto.nombre) throw new BadRequestException('ingrese un nombre para el departamento');
-    //     const splitString = token.split('Bearer ')[0]; // Bearer ${token}
-    //     const deptoCreated = await this.service.create(depto, splitString);
-    //     response.status(HttpStatus.CREATED).json({ ok: true, deptoCreated, msg: 'created' })
-    // }
-
+  
 }

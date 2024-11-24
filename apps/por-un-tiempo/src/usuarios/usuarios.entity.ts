@@ -13,7 +13,7 @@ export class Usuarios {
 
     @Column({ type: 'varchar', nullable: true, length: 255 })
     nombre: string;
-
+    
     @Column({ type: 'varchar', nullable: false, unique: true, length: 255})
     email: string;
 

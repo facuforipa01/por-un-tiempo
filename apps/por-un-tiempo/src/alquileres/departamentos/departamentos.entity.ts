@@ -10,8 +10,6 @@ export class Departamento {
     @Column({ type: 'varchar', nullable: true })
     nombre: string
 
-    //agregar columna descripcion
 
-    //agregar columna precio
 
 }

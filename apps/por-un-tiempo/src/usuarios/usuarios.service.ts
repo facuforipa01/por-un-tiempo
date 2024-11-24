@@ -15,12 +15,9 @@ export class UsuariosService {
 
   async register(usuario: UsuarioDto) {
     try {
-      //! The hash fails if doesn't exist the string
       if (!usuario.password) throw new UnauthorizedException('No password');
-
       const hash = await this.authService.hashPassword(usuario.password);
       usuario.password = hash
-
       const result = await this.repo.save(usuario);
       return result;
     } catch (err: any) {
@@ -30,25 +27,19 @@ export class UsuariosService {
       throw new HttpException(err.message, err.status);
     }
   }
-
   async login(email: string, pass: string) {
     try {
       const user = await this.repo.findOne({ where: { email },
         select: {email:true, password: true, id: true, role: true, nombre: true}
       });
       console.log(user);
-
       if (!user) throw new NotFoundException('Usuario no encontrado');
-
       const isPassword = await this.authService.comparePassword(
         pass,
         user.password,
       );
-
       if (!isPassword) throw new UnauthorizedException('Contraseña incorrecta');
-
       const token = await this.authService.generateJwt(user);
-
       return token;
     } catch (err) {
       console.error(err);
@@ -57,7 +48,6 @@ export class UsuariosService {
       throw new HttpException(err.message, err.status);
     }
   }
-
   /**
    * @description Obtiene el usuario
    * @param id ID  del usuario
@@ -66,9 +56,7 @@ export class UsuariosService {
   async getOne(id: number): Promise<UsuarioDto> {
     try {
       const usuario = await this.repo.findOne({ where: { id } })
-
       if (!usuario) throw new NotFoundException('usuario no encontrado')
-
       return usuario
     } catch (err) {
       console.error(err)
@@ -77,7 +65,6 @@ export class UsuariosService {
       throw new HttpException(err.message, err.status)
     }
   }
-
   //?page=1&limit=1 para pasarle limites de pagina y cantidad de usuarios a travez del endpoint
   async getAll(paginationQuery: PaginationQueryDto): Promise<{
     data: UsuarioDto[];
@@ -85,20 +72,14 @@ export class UsuariosService {
     page: number;
     limit: number;
   }> {
-
     const {page = 1, limit = 100} = paginationQuery;
-
     try {
-      
       const [usuarios, total] = await this.repo.findAndCount({
         skip: (page - 1) * limit,
         take: limit
       })
-
       if (!usuarios) throw new NotFoundException('no hay usuarios encontrados')
-
       return {data: usuarios, total, page, limit}
-
     } catch (err) {
       console.error(err)
       if (err instanceof QueryFailedError)
@@ -110,8 +91,7 @@ export class UsuariosService {
     try {
       const user = await this.repo.findOne({ where: { id } }) //busca a el usuario por id
       const usuario = await this.repo.remove(user)
-      return usuario
-                
+      return usuario        
     } catch (err) {
       console.error(err)
       if (err instanceof QueryFailedError)
@@ -129,11 +109,8 @@ export class UsuariosService {
         user.avatar = files[0].filename;
       }
       const oldUser = await this.getOne(id);
-
       const mergeUser = await this.repo.merge(oldUser, user);
-
       const result = await this.repo.save(mergeUser);
-
       return result;
     } catch (err) {
       console.error(err);
