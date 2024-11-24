@@ -65,6 +65,20 @@ export class UsuariosService {
       throw new HttpException(err.message, err.status)
     }
   }
+
+  async getOnebyEmail(email: string): Promise<UsuarioDto> {
+    try {
+      const usuario = await this.repo.findOne({ where: { email } })
+      if (!usuario) throw new NotFoundException('no hay usuarios con ese mail')
+      return usuario
+    } catch (err) {
+      console.error(err)
+      if (err instanceof QueryFailedError)
+        throw new HttpException(`${err.name} ${err.driverError}`, 404);
+      throw new HttpException(err.message, err.status)
+    }
+  }
+
   //?page=1&limit=1 para pasarle limites de pagina y cantidad de usuarios a travez del endpoint
   async getAll(paginationQuery: PaginationQueryDto): Promise<{
     data: UsuarioDto[];

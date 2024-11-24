@@ -24,7 +24,8 @@ export class UsuariosController {
     @Res() res: Response,
   ) {
     const token = await this.service.login(usuario.email, usuario.password);
-    res.status(HttpStatus.OK).json({ ok: true, result:token, msg: 'approved' });
+    const userid = await this.service.getOnebyEmail(usuario.email)
+    res.status(HttpStatus.OK).json({ ok: true, result:token, msg: `${userid.id}` });
   }
 
   @Patch(':id')
@@ -44,6 +45,12 @@ export class UsuariosController {
     const usuario = await this.service.getOne(id);
     res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
   }
+
+  // @Get('email/:email')
+  // async getOnebyEmail(@Param('email') email: string, @Res() res: Response) {
+  //   const usuario = await this.service.getOnebyEmail(email);
+  //   res.status(HttpStatus.OK).json({ ok: true, usuario, msg: 'approved' });
+  // }
 
   @Get('/')
   async getAll(@Query() paginationQuery: PaginationQueryDto, @Res() res: Response) {

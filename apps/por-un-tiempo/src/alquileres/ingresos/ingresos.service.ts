@@ -1,4 +1,4 @@
-import { Get, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Get, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ingreso } from './ingresos.entity';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -31,7 +31,7 @@ export class IngresosService {
         
         // chequear que exista la parcela y que no este ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela Nro ${parcelaId} no encontrada `); }
-        if (parcelaFound.ocupada) { throw new NotFoundException(`Parcela Nro ${parcelaId} ocupada`); }
+        if (parcelaFound.ocupada) { throw new ConflictException(`Parcela Nro ${parcelaId} ocupada`); }
 
         
         // chequear que exista el usuario 
