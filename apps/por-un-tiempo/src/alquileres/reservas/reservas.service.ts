@@ -59,7 +59,7 @@ export class ReservasService {
 
         })
 
-        //busca si se pisa con alguna reserva aceotada
+        //busca si se pisa con alguna reserva aceptada
         const reservaExists = await this.reservaRepository.findOne({
             where: {
                 departamento: { id: deptoId },
@@ -68,7 +68,21 @@ export class ReservasService {
                 hasta: MoreThanOrEqual(desdeEntrante)
             }
         })
-        if (reservaExists) throw new NotFoundException(`Este depto ya tiene una reserva en esa fecha`)
+
+        //Cuenta si hay reservas en la misma fecha
+        const reservasConflictivas= await this.reservaRepository.count({
+            where: {
+                departamento: { id: deptoId },
+                estado: In([Estado.ACCEPTED, Estado.PENDING]),
+                desde: LessThanOrEqual(hastaEntrante),
+                hasta: MoreThanOrEqual(desdeEntrante)
+            }
+        })
+        //Si hay aceptada corta acá
+        if (reservaExists) throw new NotFoundException(`Este depto ya tiene una reserva aceptada en esa fecha`)
+        //Si no hay ninguna aceptada, corrobora q no hayan mas de 2 pendientes
+        if (reservasConflictivas>=2) throw new NotFoundException(`Este depto ya tiene el maximo de reservas pendientes`)        
+        //La guarda si cumple los requisitos.
         return this.reservaRepository.save(reserva)
 
     }
@@ -116,7 +130,7 @@ export class ReservasService {
         }
     }
 
-    async acceptRequest(id: number, token?: string) {
+    async acceptRequest(id: number, token?: string, deptoId?: number) {
         try {
             const decodedUser = await this.authService.verifyJwt(token);
             const role: Role = decodedUser.role;
@@ -125,7 +139,25 @@ export class ReservasService {
             if (!reserva) throw new NotFoundException('no encontramos la reserva')
 
             if (role == Role.ADMIN) {
+                const reserva = await this.reservaRepository.findOne({
+                    where: { id },
+                    relations: ['departamento'], // Aseguramos la carga del departamento
+                });
+                console.log(reserva.departamento.id)
+
                 await this.reservaRepository.update(reserva, { estado: Estado.ACCEPTED });
+                const reservasPendientes = await this.reservaRepository.find({
+                    where: {
+                        departamento: { id: reserva.departamento.id }, // Filtra por el mismo departamento
+                        estado: In([Estado.PENDING]), // Solo reservas pendientes
+                        desde: LessThanOrEqual(reserva.hasta), // Fechas conflictivas
+                        hasta: MoreThanOrEqual(reserva.desde),
+                    },
+                });
+                console.log(reservasPendientes)
+                    for (const reservaPendiente of reservasPendientes) {
+                        await this.reservaRepository.update(reservaPendiente    .id, { estado: Estado.REFUSED });
+                    }
             } else {
                 throw new UnauthorizedException('usted no puede aceptar reservas')
             }
@@ -137,7 +169,7 @@ export class ReservasService {
         return
     }
 
-    async rejectRequest(id: number, token?: string) {
+    async rejectRequest(id: number, token?: string, ) {
         try {
             const decodedUser = await this.authService.verifyJwt(token);
             const role: Role = decodedUser.role;
