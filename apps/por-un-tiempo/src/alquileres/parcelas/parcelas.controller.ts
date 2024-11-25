@@ -6,18 +6,18 @@ import { Parcela } from './parcelas.entity';
 
 @Controller('parcelas')
 export class ParcelasController {
-    constructor(private readonly service: ParcelasService) {}
+    constructor(private readonly service: ParcelasService) { }
 
     @Get(':id')
-    async getOne(@Param('id') id: number, @Res() response: Response){
+    async getOne(@Param('id') id: number, @Res() response: Response) {
         const parcela = await this.service.getOne(id);
-     response.status(HttpStatus.OK).json({ ok: true, parcela, msg: 'approved' })
+        response.status(HttpStatus.OK).json({ ok: true, result: parcela, msg: 'approved' })
     }
     @Get('/')
-    async getAll(@Query() paginationQuery: PaginationQueryDto, @Headers('authorization') authorization: string, @Res() response: Response){
+    async getAll(@Query() paginationQuery: PaginationQueryDto, @Headers('authorization') authorization: string, @Res() response: Response) {
         console.log(authorization)
         const parcelas = await this.service.getAll(paginationQuery);
-     response.status(HttpStatus.OK).json({ ok: true, result: parcelas, msg: 'approved' })
+        response.status(HttpStatus.OK).json({ ok: true, result: parcelas, msg: 'approved' })
     }
     @Post('/nuevo')
     async create(@Body() parcela: Parcela, @Res() response: Response) {
@@ -25,5 +25,5 @@ export class ParcelasController {
         const parcelaCreated = await this.service.create(parcela);
         response.status(HttpStatus.CREATED).json({ ok: true, parcelaCreated, msg: 'created' })
     }
-    
+
 }

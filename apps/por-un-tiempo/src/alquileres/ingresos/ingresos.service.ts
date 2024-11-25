@@ -73,14 +73,14 @@ export class IngresosService {
         if (!usuarioFound) throw new NotFoundException('Usuario no encontrado');
 
         //chequea que la parcela del registro coincida con la ingresada
-        if (ingresoEnCuestion.parcela.id !== parcelaId) {
-            throw new NotFoundException(
-                `La parcela ${parcelaId} no esta en el registro ${ingresoId}`); }
+        // if (ingresoEnCuestion.parcela.id !== parcelaId) {
+        //     throw new NotFoundException(
+        //         `La parcela ${parcelaId} no esta en el registro ${ingresoId}`); }
 
         //chequea que el usuario del registro coincida con el ingresad
-        if (ingresoEnCuestion.usuario.id !== usuarioId) {
-            throw new NotFoundException(
-                `El usuario ${usuarioId} no esta en el registro ${ingresoId}`); }
+        // if (ingresoEnCuestion.usuario.id !== usuarioId) {
+        //     throw new NotFoundException(
+        //         `El usuario ${usuarioId} no esta en el registro ${ingresoId}`); }
 
         
        const salir = (ingresoEnCuestion.usuario.id == usuarioId && ingresoEnCuestion.parcela.id == parcelaId)
