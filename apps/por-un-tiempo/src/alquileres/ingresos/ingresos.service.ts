@@ -3,12 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Ingreso } from './ingresos.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { IngresoDto } from './ingresos.dto';
-import { ParcelaDto } from '../parcelas/parcelas.dto';
-import { Parcela } from '../parcelas/parcelas.entity';
-import { Usuarios } from '../../usuarios/usuarios.entity';
-import { UsuarioDto } from '../../usuarios/usuarios.dto';
 import { PaginationQueryDto } from '../../common';
 import { ParcelasService } from '../parcelas/parcelas.service';
+import { UsuariosService } from '../../usuarios/usuarios.service';
 
 
 @Injectable()
@@ -16,18 +13,16 @@ export class IngresosService {
     constructor(
         @InjectRepository(Ingreso)
         private readonly ingresoRepository: Repository<IngresoDto>,
-        @InjectRepository(Parcela)
-        private readonly parcelaRepositoy: Repository<ParcelaDto>,
-        @InjectRepository(Usuarios)
-        private readonly usuarioRepository: Repository<UsuarioDto>,
-        private readonly parcelasService: ParcelasService
+
+        private readonly parcelaService: ParcelasService,
+        private readonly usuarioService: UsuariosService,
     ) { }
 
     // ocupar parcela
     async ocuparParcela(usuarioId: number, parcelaId: number): Promise<IngresoDto> {
 
-        const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
-        const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        const parcelaFound = await this.parcelaService.getOne(parcelaId);
+        const usuarioFound = await this.usuarioService.getOne(usuarioId);
         
         // chequear que exista la parcela y que no este ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela Nro ${parcelaId} no encontrada `); }
@@ -49,7 +44,7 @@ export class IngresosService {
             }
         )
         // si hay ingreso, entonces cambiar a true la ocupacion parcela/ocupacion
-        if (ingreso) this.parcelasService.ocupar(parcelaId)
+        if (ingreso) this.parcelaService.ocupar(parcelaId)
 
         return this.ingresoRepository.save(ingreso)
 
@@ -58,7 +53,7 @@ export class IngresosService {
     // desocupar parcela
     async desocuparParcela(parcelaId: number, usuarioId: number, ingresoId: number): Promise<IngresoDto> {
 
-        const parcelaFound = await this.parcelaRepositoy.findOne({ where: { id: parcelaId } });
+        const parcelaFound = await this.parcelaService.getOne(parcelaId);
         // chequear que exista la parcela y que este ocupada
         if (!parcelaFound) { throw new NotFoundException(`Parcela no encontrada ${parcelaId}`); }
         if (!parcelaFound.ocupada) { throw new NotFoundException(`Parcela ${parcelaId} no esta ocupada`); }
@@ -67,7 +62,7 @@ export class IngresosService {
        const ingresoEnCuestion = await this.ingresoRepository.findOne({ where: { id: ingresoId }, relations: ['usuario', 'parcela'] })
        if (!ingresoEnCuestion)  throw new NotFoundException(`Ingreso no encontrado ${ingresoId}`)
         
-        const usuarioFound =await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        const usuarioFound =await this.usuarioService.getOne(usuarioId);
 
         // chequear que exista el usuario 
         if (!usuarioFound) throw new NotFoundException('Usuario no encontrado');
@@ -88,7 +83,7 @@ export class IngresosService {
         // si hay una desocupacion 
         if (salir) {
             //cambiar a false la ocupacion parcela/ocupacion
-            this.parcelasService.desocupar(parcelaId)
+            this.parcelaService.desocupar(parcelaId)
             //cargar la fecha actual en ingresos/salida      
             this.ingresoRepository.update(ingresoId, { salida: new Date() })
         }

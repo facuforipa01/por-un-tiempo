@@ -4,7 +4,6 @@ import { DepartamentoDto } from './departamentos.dto';
 import { QueryFailedError, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from '../../common';
-import { AuthService } from '../../usuarios/auth/auth.service';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
@@ -13,7 +12,6 @@ export class DepartamentosService {
     @Inject('MAILER') private readonly proxy: ClientProxy,
     @InjectRepository(Departamento)
     private readonly deptoRepository: Repository<DepartamentoDto>,
-    private readonly authService: AuthService
   ) { }
 
 

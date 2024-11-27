@@ -10,6 +10,7 @@ import { Parcela } from './parcelas.entity';
     TypeOrmModule.forFeature([Parcela])
   ],
   controllers: [ParcelasController],
-  providers: [ParcelasService]
+  providers: [ParcelasService],
+  exports: [ParcelasService]
 })
 export class ParcelasModule {}

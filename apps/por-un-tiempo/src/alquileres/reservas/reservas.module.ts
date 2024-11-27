@@ -8,18 +8,19 @@ import { Reserva } from './reservas.entity';
 import { ReservasService } from './reservas.service';
 import { UsuariosModule } from '../../usuarios/usuarios.module';
 import { ClientsModule } from '@nestjs/microservices';
+import { DepartamentosModule } from '../departamentos/departamentos.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Reserva, Departamento, Usuarios]),
-     UsuariosModule,
+    UsuariosModule,
+    DepartamentosModule,
 
     ClientsModule.register([
-      {name: 'MAILER_MS', options: { port: 3001, host: 'localhost'}}
-    ]
-     )
-],
+      { name: 'MAILER_MS', options: { port: 3001, host: 'localhost' } },
+    ]),
+  ],
   controllers: [ReservasController],
-  providers: [ReservasService, UsuariosService]
+  providers: [ReservasService, UsuariosService],
 })
-export class ReservasModule { }
+export class ReservasModule {}

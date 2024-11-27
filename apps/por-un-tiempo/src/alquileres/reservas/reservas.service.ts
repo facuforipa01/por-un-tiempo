@@ -2,13 +2,12 @@ import { BadRequestException, HttpException, Injectable, NotFoundException, Unau
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationQueryDto } from '../../common';
 import { AuthService } from '../../usuarios/auth/auth.service';
-import { UsuarioDto } from '../../usuarios/usuarios.dto';
-import { Role, Usuarios } from '../../usuarios/usuarios.entity';
+import { Role} from '../../usuarios/usuarios.entity';
 import { In, LessThanOrEqual, MoreThanOrEqual, QueryFailedError, Repository } from 'typeorm';
-import { DepartamentoDto } from '../departamentos/departamentos.dto';
-import { Departamento } from '../departamentos/departamentos.entity';
 import { ReservaDto } from './reservas.dto';
 import { Estado, Reserva } from './reservas.entity';
+import { DepartamentosService } from '../departamentos/departamentos.service';
+import { UsuariosService } from '../../usuarios/usuarios.service';
 
 @Injectable()
 export class ReservasService {
@@ -19,11 +18,9 @@ export class ReservasService {
         //los servicios ya inyectan los repositorios y al llamarlos los traen
         @InjectRepository(Reserva)
         private readonly reservaRepository: Repository<ReservaDto>,
-        @InjectRepository(Departamento)
-        private readonly departamentoRepository: Repository<DepartamentoDto>,
-        @InjectRepository(Usuarios)
-        private readonly usuarioRepository: Repository<UsuarioDto>,
 
+        private readonly departamentoService: DepartamentosService,
+        private readonly usuarioService: UsuariosService,
         private authService: AuthService,
 
     ) { }
@@ -32,8 +29,8 @@ export class ReservasService {
         const desdeEntrante = new Date(desde)
         const hastaEntrante = new Date(hasta)
 
-        const deptoFound = await this.departamentoRepository.findOne({ where: { id: deptoId } });
-        const usuarioFound = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        const deptoFound = await this.departamentoService.getOne(deptoId);
+        const usuarioFound = await this.usuarioService.getOne(usuarioId);
 
         // chequear que exista el depto y que no este ocupado
         if (!deptoFound) { throw new NotFoundException(`El departamento Nro ${deptoId} no fue encontrado `); }

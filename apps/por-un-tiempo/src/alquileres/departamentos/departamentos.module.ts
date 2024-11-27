@@ -25,6 +25,7 @@ import { envs } from '../../config';
       }
     ])],
   controllers: [DepartamentosController],
-  providers: [DepartamentosService, AuthService, JwtService, UsuariosService]
+  providers: [DepartamentosService, AuthService, JwtService, UsuariosService],
+  exports: [DepartamentosService]
 })
 export class DepartamentosModule { }
